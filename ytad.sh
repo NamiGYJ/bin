@@ -1,21 +1,41 @@
 #!/bin/bash
+# [Y]ou[T]ube [A]lbum [D]isassembler
+# 	small script to cut an album made of one file (typically albums downloaded from youtube)
+#   into separate files for each song,
 
 
+### INPUT
+# titles
 namelist=(
 	"title 1"
 	"title 2"
+	"title 3"
 )
+# times
 timelist=(
 	"00:00" # start time
 	"01:20"
 	"02:45"
 	"05:00" # end time
 )
-
-i=0
+# file name of the album (or path)
 file="file.mp3"
+# string to which the title will be appended
 output="artist"
 
+
+echo "${#timelist[*]}"
+
+### CODE
+size=$[ ${#timelist[*]} - 1 ]
+if [ $size -ne ${#namelist[*]} ]; then
+	echo "error. incoherence between times and titles"
+fi
+
+
+i=0
+for ((i=0; i<$size;i++))
+do
 	divtime=$(echo ${timelist[i]} | tr ":" "\n")
 
 	j=0
@@ -71,7 +91,7 @@ output="artist"
 
 	output="$output - ${namelist[i]}"
 	echo "bin/ffmpeg.exe -ss ${timelist[i]} -t $diff -i $file -vn -acodec aac -vbr 5 -crf 10 $output.aac"
-
+done
 
 
 
