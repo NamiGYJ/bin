@@ -28,7 +28,7 @@ artist="artist"
 
 
 
-### CODE
+### CODE ###
 
 # check number of times and number of titles
 size=$[ ${#timelist[*]} - 1 ]
@@ -36,7 +36,9 @@ if [ $size -ne ${#namelist[*]} ]; then
 	echo "error. incoherence between times and titles"
 fi
 # create the directory
-mkdir -p "$album"
+mkdir -p "$artist"
+mkdir -p "$artist"/"$album"
+
 
 # loop for all songs
 i=0
@@ -115,5 +117,5 @@ do
 	-metadata track="$(( $i+1 ))" \
 	-metadata artist="$artist" \
 	-metadata album="$album" \
-	"$album"/"$filename.flac"
+	"$artist"/"$album"/"$filename.flac"
 done
