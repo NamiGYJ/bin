@@ -1,9 +1,18 @@
 #!/bin/bash
+
 # [Y]ou[T]ube [A]lbum [D]isassembler
-# 	small script to cut an album made of one file (typically albums downloaded from youtube)
+# 	small script to cut an album made of one file
 #   into separate files for each song,
 
 ### INPUT
+# Debug
+testing=0
+
+if [( -nz $1 ) -a ( $1 = "-t" )]
+then
+	testing=1
+fi
+
 # titles
 namelist=(
 	"title 1"
@@ -20,7 +29,7 @@ timelist=(
 # file name of the album (or path)
 file="artist - album (full album).mp4"
 
-# name of the folder in which you want to put it (album)
+# destination folder
 album="album"
 
 # string to which the title will be appended (artist?)
@@ -42,7 +51,7 @@ mkdir -p "$artist"/"$album"
 
 # loop for all songs
 i=0
-for ((i=0; i<$size;i++))
+for ((i=0; i<$size; i++))
 do
 	# divide time string in newlines
 	divtime=$(echo ${timelist[i]} | tr ":" "\n")
@@ -98,7 +107,8 @@ do
 	fi
 
 	# calculate time difference (song length)
-	echo "${divtimelist2[2]} - ${divtimelist[2]}"
+
+	#echo "${divtimelist2[2]} - ${divtimelist[2]}"
 	sec=$[ 10#${divtimelist2[2]} - 10#${divtimelist[2]} ]
 	min=$[ 10#${divtimelist2[1]} - 10#${divtimelist[1]} ]
 	hor=$[ 10#${divtimelist2[0]} - 10#${divtimelist[0]} ]
@@ -108,14 +118,15 @@ do
 	filename="$artist - ${namelist[i]}"
 
 	# just for debugging
-	echo ""
 	echo "../bin/ffmpeg.exe -ss ${timelist[i]} -t $tdiff -i \"$file\" -vn -c:a flac -crf 1 -metadata title=\"${namelist[i]}\" -metadata track=\"$(( $i+1 ))\" \"$album\"/\"$filename.flac\""
-	echo ""
-	# ffmpeg command
-	../bin/ffmpeg.exe -ss ${timelist[i]} -t $tdiff -i "$file" -vn -c:a flac -vbr 5 -crf 1 \
-	-metadata title="${namelist[i]}" \
-	-metadata track="$(( $i+1 ))" \
-	-metadata artist="$artist" \
-	-metadata album="$album" \
-	"$artist"/"$album"/"$filename.flac"
+
+	if [ $testing -eq 0 ]; then
+		# ffmpeg command
+		../bin/ffmpeg.exe -ss ${timelist[i]} -t $tdiff -i "$file" -vn -c:a flac -vbr 5 -crf 1 \
+		-metadata title="${namelist[i]}" \
+		-metadata track="$(( $i+1 ))" \
+		-metadata artist="$artist" \
+		-metadata album="$album" \
+		"$artist"/"$album"/"$filename.flac"
+	fi
 done
