@@ -5,19 +5,19 @@
 if [[ $# != 2 ]]; then
 	echo "Illegal number of params"
 	echo "usage:"
-	echo "$0 <dest-hdd-letter> <directory>"
+	echo "$0 <local-dir> <dist-dir>"
 	exit
 fi
 
-path=`pwd`
-current=${path:1:1}
-path=$(echo $path | sed "s%^\(/\)[a-z]%\1$1%")
-echo -e "path: $path"
+# append a slash if there is none at the end
+dst=`echo $2 | sed "/\/$/! s/\(.*\)/\1\//"`
+src=`echo $1 | sed "/\/$/! s/\(.*\)/\1\//"`
+echo -e "path: $dst"
 echo
 
-find "$2" | while read file;
+find "$1" | while read file;
 do
-	if [ ! -e "${path}/$file" ]; then
+	if [ ! -e "${dst}${file#$src}" ]; then
 		echo -e "$file"
 	fi
 done
